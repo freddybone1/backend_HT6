@@ -1,7 +1,6 @@
-
 from django.core.management import BaseCommand  # noqa
-from faker import Faker  # noqa
 from home.models import Student  # noqa
+from faker import Faker  # noqa
 
 
 class Command(BaseCommand):
