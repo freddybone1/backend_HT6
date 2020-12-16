@@ -1,6 +1,7 @@
-from django.core.management import BaseCommand
-from faker import Faker
-from home.models import Student
+
+from django.core.management import BaseCommand  # noqa
+from faker import Faker  # noqa
+from home.models import Student  # noqa
 
 
 class Command(BaseCommand):
