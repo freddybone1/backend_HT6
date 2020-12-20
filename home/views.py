@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect  # noqa
 from home.forms import StudentForm  # noqa
 from home.models import Student  # noqa
@@ -11,7 +12,7 @@ def add_student(request):
     if request.method == 'GET':
         student_form = StudentForm()
         context = {
-            'form': student_form,
+            'student_form': student_form,
         }
         return render(request, 'add_student.html', context=context)
 
@@ -21,7 +22,9 @@ def add_student(request):
         # Check if the data of new student is valid
         if student_form.is_valid():
             student_form.save()
-        student_form.save()
+        else:
+            return HttpResponse("problem")
+
         return redirect('/list')
 
 
