@@ -17,7 +17,10 @@ Including another URLconf
 from django.contrib import admin  # noqa
 from django.urls import path  # noqa
 from home.views import add_student, show_all_students  # noqa
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5e2732befaef6466301b37d5806e4e2e0d27f6fa
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('add/', add_student),
