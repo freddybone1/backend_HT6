@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Full list</title>
+    <ul>
+        {% for student in students %}
+        <li>{{student.name}}</li>
+    {% endfor %}
+    </ul>
+
+
 </head>
 <body>
 
-{% for student in students %}
-<h6>{{student.name}}</h6>
-    {% endfor %}
 </body>
 </html>
