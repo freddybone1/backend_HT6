@@ -37,3 +37,30 @@ def show_all_students(request):
     return render(request=request,
                   template_name='list_of_students.html',
                   context={'students': students})
+
+
+def update_student(request, id):
+    """
+
+        """
+    if request.method == 'GET':
+        student = Student.objects.get(id=id)
+        student_form = StudentForm(instance=student)
+
+
+
+        context = {
+            'student_form': student_form,
+        }
+        return render(request, 'add_student.html', context=context)
+
+    # Save new student's data into database
+    elif request.method == 'POST':
+        student_form = StudentForm(request.POST)
+        # Check if the data of new student is valid
+        if student_form.is_valid():
+            student_form.save()
+        else:
+            return HttpResponse("problem")
+
+        return redirect('/list')
