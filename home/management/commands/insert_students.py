@@ -28,4 +28,6 @@ class Command(BaseCommand):
             student.description = faker.text()
             student.birthday = faker.date(pattern='%d-%m-%Y')
             student.email = faker.email()
+            student.social_url = faker.url()
+            student.custom_name = '{} {}'.format(student.name, student.surname)
             student.save()
