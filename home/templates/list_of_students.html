@@ -5,8 +5,8 @@
     <title>Full list</title>
     <ul>
         {% for student in students %}
-        <li>{{student.name}}</li>
-    {% endfor %}
+        <li><a href="{{student.social_url}}">{{student.custom_name}}</a> {{student.email}} <b>{{student.birthday}}</b></li>
+        {% endfor %}
     </ul>
 
 

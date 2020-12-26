@@ -6,9 +6,9 @@
 </head>
 <body>
 
-<form method="POST" action="/add/">
+<form method="POST" action="{% url 'page_add_student'%}">
     {% csrf_token %}
-    {{student_form}}
+    <li>{{student_form}}</li>
     <input type="submit">
 </form>
 
