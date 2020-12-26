@@ -16,13 +16,11 @@ Including another URLconf
 
 from django.contrib import admin  # noqa
 from django.urls import path  # noqa
-from home.views import  AddStudent, ShowStudents  # noqa
+from home.views import AddStudent, ShowStudent, UpdateStudent  # noqa
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-
-
     path('add/', AddStudent.as_view(), name='page_add_student'),
-    path('list/', ShowStudents.as_view(), name='page_list_students')
+    path('list/', ShowStudent.as_view(), name='page_list_students'),
+    path('list/up/<id>/', UpdateStudent.as_view(), name='page_update_students'),  # noqa
 ]

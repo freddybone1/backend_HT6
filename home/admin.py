@@ -13,13 +13,10 @@ class StudentAdmin(ModelAdmin):
     def link_to_social_url(self, student):
         """
         Function checks if student has social media link and show his name like this link.
-        In case if he doesnt have social media link show his full name
-        In case if student dont have full name in database - function creates it and show to admin user
+        In case if he doesn't have social media link show his full name
         """
         if student.social_url:
-            return format_html('<a href="{}">{}</a>'.format(student.social_url, student.custom_name))
-        elif student.custom_name:
-            return student.custom_name
+            return format_html('<a href="{}">{} {}</a>'.format(student.social_url, student.name, student.surname))
         else:
             return '{} {}'.format(student.name, student.surname)
 
