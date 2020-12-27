@@ -1,6 +1,5 @@
 from django.db.models.signals import pre_save, pre_delete
 from django.dispatch import receiver
-from django.http import HttpResponse
 from faker import Faker
 
 from home.models import Student
