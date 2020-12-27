@@ -1,11 +1,14 @@
-import uuid
+import uuid  # noqa
 
-from django.utils.deprecation import MiddlewareMixin
-import logging
+from django.utils.deprecation import MiddlewareMixin  # noqa
+import logging  # noqa
+
 """
-We make logs using logging library and save all logs in log.txt with specific format time/level(INFO)/message text
+We make logs using logging library and save all logs
+in log.txt with specific format time/level(INFO)/message text
 """
-logging.basicConfig(level=logging.INFO, format='%(asctime)s :: %(levelname)s :: %(message)s', filename='log.txt')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s'
+                    ' :: %(levelname)s :: %(message)s', filename='log.txt')
 
 
 class LogMiddleware(MiddlewareMixin):
@@ -19,7 +22,8 @@ class LogMiddleware(MiddlewareMixin):
 
 class RawDataMiddleware(MiddlewareMixin):
     """
-    This middleware wait for any request and generate unique hash value for request.
+    This middleware wait for any request and
+    generate unique hash value for request.
     Then save it in request object META dict.
     Shows it in log file
     """
@@ -32,7 +36,8 @@ class RawDataMiddleware(MiddlewareMixin):
 
 class IdentifyResponseMiddleware(MiddlewareMixin):
     """
-    This middleware get hash value from request.META and set in new header 'uuid' in response object
+    This middleware get hash value from request.META
+    and set in new header 'uuid' in response object
     Shows it in log file
     """
 
