@@ -5,7 +5,7 @@ python:
 install:
   - pip install Poetry
 #  - pip install -r requirements.txt
-  - Poetry install
+  - poetry install
 # command to run tests
 script:
   - flake8 backend_HT5 --exclude=venv
