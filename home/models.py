@@ -16,3 +16,5 @@ class Student(Model):
     birthday = models.CharField(max_length=200, null=True)
     email = models.CharField(max_length=200, null=True)
     social_url = models.CharField(max_length=200, null=True)
+    normalized_name = models.CharField(max_length=200, null=True)
+    is_active = models.CharField(max_length=200, null=True)
