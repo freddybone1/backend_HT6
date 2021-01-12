@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Full list</title>
+{% extends 'base.html' %}
+
+{% block title %} Full list {% endblock %}
+
+{% block 'body' %}
+
     <ul>
         {% for student in students %}
         <li>{{student.id}} <a href="{{student.social_url}}">{{student.name}}{{student.surname}}</a> {{student.email}} <b>{{student.birthday}}</b></li>
         {% endfor %}
     </ul>
-</head>
-<body>
-</body>
-</html>
+
+{% endblock %}
