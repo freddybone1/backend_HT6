@@ -3,10 +3,43 @@
 {% block title %} Add student {% endblock %}
 
 {% block 'body' %}
-<form method="POST" action="{% url 'page_add_student'%}">
-    {% csrf_token %}
-    <li>{{student_form}}</li>
-    <input type="submit">
-</form>
+<header>
+  <div class="navbar navbar-dark bg-dark shadow-sm">
+    <div class="container">
+      <h3 class="navbar-brand d-flex align-items-center">
+        <strong>Full all fields to add new student</strong>
+      </h3>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="row align-items-centre">
+    <div class="col">
 
+    </div>
+    <div class="col">
+      <form method="POST" action="{% url 'page_add_student'%}">
+    {% csrf_token %}
+    {% for field in student_form %}
+    <div class="col-md-6">
+<!--        <label for= "{{student_form.field}}" class="{{student_form}}">{{field.name.capitalize}}</label>-->
+<!--        <input type="text" class="{{field.first}}" id="{{student_form.field}}">-->
+        {{field.name.capitalize}}
+        </div>
+        <div class="col-md-6">
+        {{field}}
+    </div>
+
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Add student</button>
+</form>
+    </div>
+    <div class="col">
+
+    </div>
+  </div>
+</div>
+
+{% include 'footer.html' %}
 {% endblock %}

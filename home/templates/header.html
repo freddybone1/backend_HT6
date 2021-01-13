@@ -1,8 +1,10 @@
+{% block header_main %}
 <header>
   <div class="navbar navbar-dark bg-dark shadow-sm">
     <div class="container">
       <h3 class="navbar-brand d-flex align-items-center">
-        <strong>List of all our students</strong>
+        <strong>{% block page_name %}Header{% endblock %}</strong>
+        <h4><a href="{% url 'page_add_student' %}"><button type="button" class="btn btn-sm btn-outline-secondary">Add new student</button></a></h4>
       </h3>
     </div>
   </div>
