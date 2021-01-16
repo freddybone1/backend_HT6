@@ -3,7 +3,9 @@ python:
   - "3.8"
 # command to install dependencies
 install:
-  - pip install -r requirements.txt
+  - pip install Poetry
+#  - pip install -r requirements.txt
+  - poetry install
 # command to run tests
 script:
   - flake8 backend_HT5 --exclude=venv

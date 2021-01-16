@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse
 from django.views import View
@@ -25,12 +25,12 @@ class AddStudent(View):
         """
         student_form = StudentForm(request.POST)
         # Check if the data of new student is valid
-        if student_form.is_valid():
-            student_form.save()
-        else:
-            return HttpResponse("problem")
-
-        return reverse('page_list_students')
+        # if student_form.is_valid():
+        #     student_form.save()
+        # else:
+        #     return HttpResponse("problem")
+        student_form.save()
+        return HttpResponseRedirect(reverse('page_list_students'))
 
 
 class ShowStudent(View):

@@ -1,16 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Update</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<form method="POST" action="{% url 'page_update_students' id=student.id%}">
+{% block title %} Update {% endblock %}
+
+{% block 'body' %}
+
+<header>
+  <div class="navbar navbar-dark bg-dark shadow-sm">
+    <div class="container">
+      <h3 class="navbar-brand d-flex align-items-center">
+        <strong>Change student's info</strong>
+      </h3>
+    </div>
+  </div>
+</header>
+    <div class="container">
+  <div class="row align-items-centre">
+    <div class="col">
+
+    </div>
+    <div class="col">
+      <form method="POST" action="{% url 'page_update_students' id=student.id %}">
     {% csrf_token %}
-    <li>{{student_form}}</li>
-    <input type="submit">
-</form>
+    {% for field in student_form %}
+    <div class="col-md-6">
+        {{field.name.capitalize}}
+        </div>
+        <div class="col-md-6">
+        {{field}}
+    </div>
 
-</body>
-</html>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Save student</button>
+</form>
+    </div>
+    <div class="col">
+
+    </div>
+  </div>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}
