@@ -19,8 +19,8 @@ class Student(Model):
     normalized_name = models.CharField(max_length=200, null=True)
     is_active = models.CharField(max_length=200, null=True)
 
-    subject = models.ForeignKey(to='home.Subject', on_delete=models.SET_NULL, null=True)
-    book = models.OneToOneField(to='home.Book', on_delete=models.CASCADE, null=True)
+    subject = models.ForeignKey('home.Subject', on_delete=models.SET_NULL, null=True)
+    book = models.OneToOneField('home.Book', on_delete=models.CASCADE, null=True)
 
 
 class Subject(Model):
