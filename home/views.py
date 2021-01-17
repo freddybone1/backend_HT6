@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse
 from django.views import View
 
+from backend_HT5.celery import simple_task
 from home.forms import StudentForm  # noqa
 from home.models import Student  # noqa
 
@@ -40,7 +41,8 @@ class ShowStudent(View):
 
     def get(self, request):
         students = Student.objects.all()
-
+        # running celery task while enter list page
+        simple_task.delay()
         return render(request=request,
                       template_name='list_of_students.html',
                       context={'students': students})
