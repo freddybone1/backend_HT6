@@ -145,6 +145,19 @@ class CsvView(View):
             ])
         return response
 
+
 class MainView(View):
     def get(self, request):
         return render(request, 'main_page.html')
+
+
+class StudentBookUpdate(View):
+    def get(self, request, id):
+        student = get_object_or_404(Student, id=id)
+        student_form = StudentForm(instance=student)
+        context = {
+            'student': student,
+            'form': student_form
+        }
+        return render(request, 'student_book_update.html', context=context)
+

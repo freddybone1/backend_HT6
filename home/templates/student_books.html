@@ -4,7 +4,7 @@
 
 {% block 'body' %}
 {% for student in students%}
-<li>{{student.book.title}}  |   {{student.name}}  |   {{student.subject.title}}  |  {{student.teachers}} </li>
+<li><a href="{%url 'page_books_update' id=student.id%}">{{student.book.title}}</a>  |   {{student.name}}  |   {{student.subject.title}}  |  {{student.teachers}} </li>
 
 <!--<li>{{student.book.title}}  |   {{student.name}}  |   {{student.subject.title}}  |  {% if student.teachers.name %} {{student.teachers.name}} {% else %} No teacher {% endif %}</li>-->
 
