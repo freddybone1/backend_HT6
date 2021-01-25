@@ -38,3 +38,8 @@ class Teacher(Model):
     id = models.AutoField(primary_key=True)  # noqa
     name = models.CharField(max_length=200)
     students = models.ManyToManyField(to='home.Student', related_name='teachers', related_query_name='teachers')
+
+
+class Currency(Model):
+    id = models.AutoField(primary_key=True)
+    value = models.JSONField()
