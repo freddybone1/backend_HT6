@@ -5,7 +5,7 @@ from django.views import View
 
 from backend_HT5.celery import simple_task
 from home.forms import StudentForm  # noqa
-from home.models import Student, Teacher, Book  # noqa
+from home.models import Student, Teacher, Book, Currency  # noqa
 
 
 class AddStudent(View):
@@ -45,10 +45,16 @@ class ShowStudent(View):
         teachers = Teacher.objects.all()
         # running celery task while enter list page
         simple_task.delay()
+
+        # get curenncy value from db and take usd and eu value from there
+        currency = Currency.objects.last()
+        currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
+
         return render(request=request,
                       template_name='list_of_students.html',
                       context={'students': students,
                                'teachers': teachers,
+                               'currency': currency_list
                                })
 
 
