@@ -1,5 +1,7 @@
+import uuid
+
 from django.core.management import BaseCommand  # noqa
-from home.models import Student  # noqa
+from home.models import Student, Subject, Book, Teacher  # noqa
 from faker import Faker  # noqa
 
 
@@ -19,7 +21,14 @@ class Command(BaseCommand):
         """
         faker = Faker()
         for _ in range(options['len']):
+            book = Book()
+            book.title = uuid.uuid4()
+            book.save()
+
+            subject, _ = Subject.objects.get_or_create(title='Python')
+
             student = Student()
+
             student.name = faker.first_name()
             student.surname = faker.last_name()
             student.age = faker.random_int(10, 100)
@@ -29,4 +38,11 @@ class Command(BaseCommand):
             student.birthday = faker.date(pattern='%d-%m-%Y')
             student.email = faker.email()
             student.social_url = faker.url()
+            student.book = book
+            student.subject = subject
             student.save()
+
+            teacher, _ = Teacher.objects.get_or_create(name="Betty")
+
+            teacher.save()
+            teacher.students.add(student)
