@@ -94,15 +94,14 @@ class UpdateStudent(View):
 class StudentBook(View):
     def get(self, request):
         """
-        Func allow to update info about student using list/up/<id>
+        Func shows all students names and their books
+        and add ability to delete book and student via link
         """
 
-        books = Book.objects.all()
         students = Student.objects.all()
 
         context = {
-            'books': books,
-            'students': students
+            'students': students,
         }
 
         return render(request, 'student_books.html', context=context)
