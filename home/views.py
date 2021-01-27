@@ -1,11 +1,11 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse
 from django.views import View
 
 from backend_HT5.celery import simple_task
 from home.forms import StudentForm  # noqa
-from home.models import Student  # noqa
+from home.models import Student, Teacher, Book, Currency  # noqa
 
 
 class AddStudent(View):
@@ -13,6 +13,7 @@ class AddStudent(View):
     Generates form which need to create new student.
     If the process is OK - redirect to /list page.
     """
+
     def get(self, request):
         student_form = StudentForm()
         context = {
@@ -41,11 +42,20 @@ class ShowStudent(View):
 
     def get(self, request):
         students = Student.objects.all()
+        teachers = Teacher.objects.all()
         # running celery task while enter list page
         simple_task.delay()
+
+        # get curenncy value from db and take usd and eu value from there
+        currency = Currency.objects.last()
+        currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
+
         return render(request=request,
                       template_name='list_of_students.html',
-                      context={'students': students})
+                      context={'students': students,
+                               'teachers': teachers,
+                               'currency': currency_list
+                               })
 
 
 class UpdateStudent(View):
@@ -65,7 +75,6 @@ class UpdateStudent(View):
 
         return render(request, 'update_student.html', context=context)
 
-
     def post(self, request, id):
         """
         Function save changes in student objects in database
@@ -78,3 +87,20 @@ class UpdateStudent(View):
             student_form.save()
 
         return redirect(reverse('page_list_students'))
+
+
+class StudentBook(View):
+    def get(self, request):
+        """
+        Func allow to update info about student using list/up/<id>
+        """
+
+        books = Book.objects.all()
+        students = Student.objects.all()
+
+        context = {
+            'books': books,
+            'students': students
+        }
+
+        return render(request, 'student_books.html', context=context)

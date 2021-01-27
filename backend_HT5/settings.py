@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from celery.schedules import crontab
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -129,3 +131,10 @@ STATIC_URL = '/static/'
 
 CELERY_BROKER_URL = 'amqp://localhost'
 CELERY_RESULT_BACKEND = 'rpc://localhost'
+
+CELERY_BEAT_SCHEDULE = {
+    'get_currency_from_privatbank': {
+        'task': 'home.tasks.parse_currency',
+        'schedule': crontab(minute='0', hour='1,13'),
+    }
+}

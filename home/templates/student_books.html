@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %} Students books {% endblock %}
+
+{% block 'body' %}
+{% for student in students%}
+<li>{{student.book.title}}  |   {{student.name}}  |   {{student.subject.title}}  |  {{student.teachers}} </li>
+
+<!--<li>{{student.book.title}}  |   {{student.name}}  |   {{student.subject.title}}  |  {% if student.teachers.name %} {{student.teachers.name}} {% else %} No teacher {% endif %}</li>-->
+
+{% endfor %}
+
+{% include 'footer.html' %}
+{% endblock %}

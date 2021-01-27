@@ -32,7 +32,6 @@ class Command(BaseCommand):
             student.name = faker.first_name()
             student.surname = faker.last_name()
             student.age = faker.random_int(10, 100)
-            # student.sex = faker.bothify(text='?', letters='FM')
             student.address = faker.address()
             student.description = faker.text()
             student.birthday = faker.date(pattern='%d-%m-%Y')
@@ -43,6 +42,5 @@ class Command(BaseCommand):
             student.save()
 
             teacher, _ = Teacher.objects.get_or_create(name="Betty")
-
-            teacher.save()
             teacher.students.add(student)
+            teacher.save()
