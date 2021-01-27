@@ -1,13 +1,20 @@
+
 import csv
 
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse
 from django.views import View
 
 from backend_HT5.celery import simple_task
-from home.forms import StudentForm  # noqa
+
+from home.forms import StudentForm, BookForm  # noqa
 from home.models import Student, Teacher, Book, Currency  # noqa
+
+
+
+
 
 
 class AddStudent(View):
@@ -151,12 +158,36 @@ class MainView(View):
 
 
 class StudentBookUpdate(View):
+    """
+    Function delete book and related student from database. Also, it allows to change title of a book
+    """
     def get(self, request, id):
         student = get_object_or_404(Student, id=id)
-        student_form = StudentForm(instance=student)
+        # Send to page form with student's book info, which we are able to change
+        book = student.book
+        book_form = BookForm(instance=book)
         context = {
             'student': student,
-            'form': student_form
+            'form': book_form,
+
         }
         return render(request, 'student_book_update.html', context=context)
 
+    def post(self, request, id):
+        # Make a tree to define which button was pushed
+        if 'Save' in request.POST:
+            student = get_object_or_404(Student, id=id)
+
+            book = student.book
+            book_form = BookForm(request.POST, instance=book)
+            # Check if the form is valid
+            if book_form.is_valid():
+                book_form.save()
+                return redirect('page_books_students')
+            else:
+                return HttpResponse(u'Upps, something went wrong')
+
+        elif 'DELETE' in request.POST:
+            book = get_object_or_404(Book, id=id)
+            book.delete()
+            return HttpResponseRedirect(reverse('page_books_students'))

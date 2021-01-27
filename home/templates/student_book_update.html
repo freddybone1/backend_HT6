@@ -3,12 +3,39 @@
 {% block title %} Student book {% endblock %}
 
 {% block 'body' %}
-<h1> Student book update page</h1>
-<!--{% for student in students%}-->
-<!--<li> {{student.name}}</li>-->
-<!--{% endfor %}-->
+<header>
+  <div class="navbar navbar-dark bg-warning shadow-sm">
+    <div class="container">
+      <h3 class="navbar-brand d-flex align-items-center">
+        <strong>{% block page_name %}Update book of {{student.name}} {{student.surname}}{% endblock %}</strong>
+        <h4><a href="{% url 'page_add_student' %}"><button type="button" class="btn btn-sm btn-outline-secondary">Add new student</button></a></h4>
+      </h3>
+    </div>
+  </div>
+</header>
 
-{{student.book.title}}
+<div class="container">
+  <div class="row ">
+    <div class="col align-self-center">
+      <form method="POST" action="{% url 'page_books_update' id=student.id %}">
+      {% csrf_token %}
+        {% for field in form%}
+        {{field}}
+        {% endfor %}
+        <!-- button to save changes in book . use name tag to identify it in view.return id of student     -->
+        <button type="submit" name="Save" class="btn btn-primary">Save</button>
+      </form>
+    </div>
+
+    <div class="col align-self-center">
+      <!-- button to delete book and student. use name tag to identify it in view.return id of book    -->
+      <form method="POST" action="{% url 'page_books_update' id=student.book.id %}">
+        {% csrf_token %}
+      <button type="submit" name="DELETE" class="btn btn-danger">DELETE</button></form>
+    </div>
+  </div>
+</div>
+
 
 {% include 'footer.html' %}
 {% endblock %}
