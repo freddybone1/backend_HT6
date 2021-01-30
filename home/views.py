@@ -1,4 +1,6 @@
-from django.http import HttpResponseRedirect
+import csv
+
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse
 from django.views import View
@@ -104,3 +106,41 @@ class StudentBook(View):
         }
 
         return render(request, 'student_books.html', context=context)
+
+
+class JsonView(View):
+    def get(self, request):
+        """
+        func transform query set of student objects to list of dict which we are send as JSON response
+        """
+        students = Student.objects.all()
+        return JsonResponse({"students": list(students.values(
+            "name",
+            "surname",
+            "book__title",
+            "subject__title",
+        )),
+        })
+
+
+class CsvView(View):
+    def get(self, request):
+        """
+        func create ad full csv file with selected data and allow user to download it
+
+        """
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = "attachment; filename='data_students.csv'"
+
+        writer = csv.writer(response)
+        writer.writerow(["Name", "Surname", "Book", 'Subject'])
+
+        students = Student.objects.all()
+        for student in students:
+            writer.writerow([
+                student.name,
+                student.surname,
+                student.book.title if student.book else None,
+                student.subject.title if student.subject else None,
+            ])
+        return response
