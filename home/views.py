@@ -9,12 +9,8 @@ from django.views import View
 
 from backend_HT5.celery import simple_task
 
-from home.forms import StudentForm, BookForm  # noqa
-from home.models import Student, Teacher, Book, Currency  # noqa
-
-
-
-
+from home.forms import StudentForm, BookForm, SubjectForm  # noqa
+from home.models import Student, Teacher, Book, Subject, Currency  # noqa
 
 
 class AddStudent(View):
@@ -161,6 +157,7 @@ class StudentBookUpdate(View):
     """
     Function delete book and related student from database. Also, it allows to change title of a book
     """
+
     def get(self, request, id):
         student = get_object_or_404(Student, id=id)
         # Send to page form with student's book info, which we are able to change
@@ -191,3 +188,47 @@ class StudentBookUpdate(View):
             book = get_object_or_404(Book, id=id)
             book.delete()
             return HttpResponseRedirect(reverse('page_books_students'))
+
+
+class SubjectList(View):
+    def get(self, request):
+        subjects = Subject.objects.all()
+
+        context = {
+
+            'subjects': subjects,
+
+        }
+        return render(request, 'subject_list.html', context=context)
+
+
+class SubjectUpdate(View):
+    def get(self, request, id):
+        subject = get_object_or_404(Subject, id=id)
+
+        subject_form = SubjectForm(instance=subject)
+
+        context = {
+            'subject': subject,
+            'form': subject_form,
+        }
+        return render(request, 'update_subject.html', context=context)
+
+    def post(self, request, id):
+        if 'Save' in request.POST:
+            subject = get_object_or_404(Subject, id=id)
+
+            subject_form = SubjectForm(request.POST, instance=subject)
+            # Check if the form is valid
+            if subject_form.is_valid():
+                subject_form.save()
+                return redirect('page_subject_list')
+            else:
+                return HttpResponse(u'Upps, something went wrong')
+        elif 'DELETE' in request.POST:
+            student = get_object_or_404(Student, id=id)
+            subjects = Subject.objects.all()
+            for subject in subjects:
+                if student in subject.student.all():
+                    subject.student.remove(student)
+            return HttpResponseRedirect(reverse('page_subject_list'))

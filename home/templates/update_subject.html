@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %} Add student {% endblock %}
+
+{% block 'body' %}
+
+{{subject.title}}
+
+
+<form method="POST" action="{% url 'page_subject_update' id=subject.id %}">
+    {% csrf_token %}
+    {% for field in form%}
+    {{field}}
+    {% endfor %}
+    <!-- button to save changes in subject . use name tag to identify it in view.return id of subject     -->
+    <button type="submit" name="Save" class="btn btn-primary">Save</button>
+</form>
+
+{% for student in subject.student.all%}
+<li>{{student.name}}
+    <form method="POST" action="{% url 'page_subject_update' id=student.id %}">
+        {% csrf_token %}
+      <button type="submit" name="DELETE" class="btn btn-danger">DELETE</button></form>
+</li>
+{% endfor %}
+
+{% include 'footer.html' %}
+{% endblock %}

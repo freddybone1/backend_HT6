@@ -5,6 +5,13 @@
 {% block 'body' %}
 
 
+{% for subject in subjects %}
 
+<a href="{%url 'page_subject_update' id=subject.id%}">{{subject.title}} </a>
+{% for student in subject.student.all %}
+
+{{student.name}}
+{% endfor %}
+{% endfor %}
 {% include 'footer.html' %}
 {% endblock %}

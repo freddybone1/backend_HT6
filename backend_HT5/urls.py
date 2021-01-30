@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin  # noqa
 from django.urls import path  # noqa
 
-from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView, StudentBookUpdate  # noqa
+
+from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView, StudentBookUpdate, SubjectList, SubjectUpdate  # noqa
 
 
 urlpatterns = [
@@ -34,4 +35,7 @@ urlpatterns = [
 
     path('', MainView.as_view(), name='main_page'),
 
+
+    path('subject_list/', SubjectList.as_view(), name='page_subject_list'),
+    path('subject_list/up/<id>', SubjectUpdate.as_view(), name='page_subject_update'),
 ]
