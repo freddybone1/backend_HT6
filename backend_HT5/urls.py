@@ -16,7 +16,7 @@ Including another URLconf
 
 from django.contrib import admin  # noqa
 from django.urls import path  # noqa
-from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView  # noqa
+from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView  # noqa
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,5 +29,5 @@ urlpatterns = [
     path('json_view', JsonView.as_view(), name='data_json'),
     path('csv_view', CsvView.as_view(), name='data_csv'),
 
-
+    path('', MainView.as_view(), name='main_page')
 ]

@@ -144,3 +144,7 @@ class CsvView(View):
                 student.subject.title if student.subject else None,
             ])
         return response
+
+class MainView(View):
+    def get(self, request):
+        return render(request, 'main_page.html')
