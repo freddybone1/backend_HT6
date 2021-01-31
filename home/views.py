@@ -9,7 +9,7 @@ from django.views import View
 
 from backend_HT5.celery import simple_task
 
-from home.forms import StudentForm, BookForm, SubjectForm, StudentToSubject  # noqa
+from home.forms import StudentForm, BookForm, SubjectForm, StudentToSubject, StudentToSomeObject, TeacherForm  # noqa
 from home.models import Student, Teacher, Book, Subject, Currency  # noqa
 
 
@@ -207,16 +207,17 @@ class SubjectUpdate(View):
     Class give possibility to see relations between subject and its students.
      Also you can change title of related subject and students relations.
     """
+
     def get(self, request, id):
         subject = get_object_or_404(Subject, id=id)
 
         subject_form = SubjectForm(instance=subject)
-        student_form = StudentToSubject()
+        student_form = StudentToSomeObject()
 
         context = {
             'subject': subject,
             'form': subject_form,
-            'student_form': student_form
+            'student_form': student_form,
         }
         return render(request, 'update_subject.html', context=context)
 
@@ -242,7 +243,7 @@ class SubjectUpdate(View):
         elif 'Add student' in request.POST:
             subjects = Subject.objects.all()
             # забираем данные из нашей кастомной формы
-            form = StudentToSubject(request.POST)
+            form = StudentToSomeObject(request.POST)
             # забираем данные из нашей кастомной формы обязательно через .is_valid() -> .cleaned_data.get(field)
             if form.is_valid():
                 # сохраняем данные из формы, которая не привязана к нашим моделям, по переменой филда из формы
@@ -252,6 +253,66 @@ class SubjectUpdate(View):
                     if student not in subject.student.all():
                         subject.student.add(student)
                         return HttpResponseRedirect(reverse('page_subject_list'))
-                return HttpResponse('Ok')
+
+            else:
+                return HttpResponse('Bad data format, please use only integers')
+
+
+class TeachersList(View):
+    def get(self, request):
+        student = Student.objects.all()
+        teachers = Teacher.objects.all()
+
+        context = {
+            "teachers": teachers,
+            'student': student,
+        }
+        return render(request, 'teachers_list.html', context=context)
+
+
+class TeacherUpdate(View):
+    def get(self, request, id):
+        teacher = get_object_or_404(Teacher, id=id)
+
+        teacher_form = TeacherForm(instance=teacher)
+        student_form = StudentToSomeObject()
+
+        context = {
+            'teacher': teacher,
+            'form': teacher_form,
+            'student_form': student_form,
+        }
+        return render(request, 'update_teacher.html', context=context)
+
+    def post(self, request, id):
+        if 'Save' in request.POST:
+            teacher = get_object_or_404(Teacher, id=id)
+
+            teacher_form = TeacherForm(request.POST, instance=teacher)
+
+            if teacher_form.is_valid():
+                teacher_form.save()
+                return redirect('page_teacher_list')
+            else:
+                return HttpResponse(u'Upps, something went wrong')
+        elif 'DELETE' in request.POST:
+            student = get_object_or_404(Student, id=id)
+            teachers = Teacher.objects.all()
+
+            for teacher in teachers:
+                if student in teacher.students.all():
+                    teacher.students.remove(student)
+            return HttpResponseRedirect(reverse('page_teacher_list'))
+
+        elif 'Add student' in request.POST:
+            teachers = Teacher.objects.all()
+            form = StudentToSomeObject(request.POST)
+            if form.is_valid():
+                student_id = form.cleaned_data.get('student_id')
+                student = get_object_or_404(Student, id=int(student_id))
+                for teacher in teachers:
+                    if student not in teacher.students.all():
+                        teacher.students.add(student)
+                        return HttpResponseRedirect(reverse('page_teacher_list'))
             else:
                 return HttpResponse('Bad data format, please use only integers')

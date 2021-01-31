@@ -1,6 +1,6 @@
 from django.forms import ModelForm  # noqa
 from django import forms
-from home.models import Student, Book, Subject  # noqa
+from home.models import Student, Book, Subject, Teacher  # noqa
 
 
 class StudentForm(ModelForm):
@@ -31,5 +31,12 @@ class SubjectForm(ModelForm):
                   ]
 
 
-class StudentToSubject(forms.Form):
+class TeacherForm(ModelForm):
+    class Meta:
+        model = Teacher
+        fields = ['name',
+                  ]
+
+
+class StudentToSomeObject(forms.Form):
     student_id = forms.CharField(label='student_id')

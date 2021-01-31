@@ -18,7 +18,7 @@ from django.contrib import admin  # noqa
 from django.urls import path  # noqa
 
 
-from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView, StudentBookUpdate, SubjectList, SubjectUpdate  # noqa
+from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView, StudentBookUpdate, SubjectList, SubjectUpdate, TeacherUpdate, TeachersList  # noqa
 
 
 urlpatterns = [
@@ -38,4 +38,9 @@ urlpatterns = [
 
     path('subject_list/', SubjectList.as_view(), name='page_subject_list'),
     path('subject_list/up/<id>', SubjectUpdate.as_view(), name='page_subject_update'),
+
+    path('teacher_list/', TeachersList.as_view(), name='page_teacher_list'),
+    path('teacher_list/up/<id>', TeacherUpdate.as_view(), name='page_teacher_update'),
+
+
 ]
