@@ -5,7 +5,13 @@
 {% block 'body' %}
 
 {{subject.title}}
-
+<form method="POST" action="{% url 'page_subject_update' id=subject.id %}">
+    {% csrf_token %}
+    <div class="col-auto">
+    {{ student_form.as_p}}
+    <button type="submit" name='Add student' class="btn btn-primary mb-3">Add student</button>
+    </div>
+</form>
 
 <form method="POST" action="{% url 'page_subject_update' id=subject.id %}">
     {% csrf_token %}

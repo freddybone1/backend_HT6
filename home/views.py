@@ -9,7 +9,7 @@ from django.views import View
 
 from backend_HT5.celery import simple_task
 
-from home.forms import StudentForm, BookForm, SubjectForm  # noqa
+from home.forms import StudentForm, BookForm, SubjectForm, StudentToSubject  # noqa
 from home.models import Student, Teacher, Book, Subject, Currency  # noqa
 
 
@@ -203,14 +203,20 @@ class SubjectList(View):
 
 
 class SubjectUpdate(View):
+    """
+    Class give possibility to see relations between subject and its students.
+     Also you can change title of related subject and students relations.
+    """
     def get(self, request, id):
         subject = get_object_or_404(Subject, id=id)
 
         subject_form = SubjectForm(instance=subject)
+        student_form = StudentToSubject()
 
         context = {
             'subject': subject,
             'form': subject_form,
+            'student_form': student_form
         }
         return render(request, 'update_subject.html', context=context)
 
@@ -232,3 +238,20 @@ class SubjectUpdate(View):
                 if student in subject.student.all():
                     subject.student.remove(student)
             return HttpResponseRedirect(reverse('page_subject_list'))
+
+        elif 'Add student' in request.POST:
+            subjects = Subject.objects.all()
+            # забираем данные из нашей кастомной формы
+            form = StudentToSubject(request.POST)
+            # забираем данные из нашей кастомной формы обязательно через .is_valid() -> .cleaned_data.get(field)
+            if form.is_valid():
+                # сохраняем данные из формы, которая не привязана к нашим моделям, по переменой филда из формы
+                student_id = form.cleaned_data.get('student_id')
+                student = get_object_or_404(Student, id=int(student_id))
+                for subject in subjects:
+                    if student not in subject.student.all():
+                        subject.student.add(student)
+                        return HttpResponseRedirect(reverse('page_subject_list'))
+                return HttpResponse('Ok')
+            else:
+                return HttpResponse('Bad data format, please use only integers')
