@@ -7,8 +7,6 @@ from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse
 from django.views import View
 
-from backend_HT5.celery import simple_task
-
 from home.forms import StudentForm, BookForm, SubjectForm, StudentToSubject, StudentToSomeObject, TeacherForm  # noqa
 from home.models import Student, Teacher, Book, Subject, Currency  # noqa
 
@@ -46,21 +44,58 @@ class ShowStudent(View):
     """
 
     def get(self, request):
-        students = Student.objects.all()
-        teachers = Teacher.objects.all()
-        # running celery task while enter list page
-        simple_task.delay()
 
         # get curenncy value from db and take usd and eu value from there
         currency = Currency.objects.last()
         currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
 
-        return render(request=request,
-                      template_name='list_of_students.html',
-                      context={'students': students,
-                               'teachers': teachers,
-                               'currency': currency_list
-                               })
+        # Catch data from forms on the page, using input_field name attribute
+        input_teacher = request.GET.get("search_teacher")
+        input_subject = request.GET.get("search_subject")
+        input_book = request.GET.get('search_book')
+
+        if input_teacher:
+            # get curenncy value from db and take usd and eu value from there
+            currency = Currency.objects.last()
+            currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
+
+            students = Student.objects.filter(teachers__name=input_teacher)
+            context = {
+                'students': students,
+                'currency': currency_list,
+            }
+            return render(request, 'list_of_students.html', context=context)
+
+        elif input_subject:
+            # get curenncy value from db and take usd and eu value from there
+            currency = Currency.objects.last()
+            currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
+
+            students = Student.objects.filter(subject__title=input_subject)
+            context = {
+                'students': students,
+                'currency': currency_list,
+            }
+            return render(request, 'list_of_students.html', context=context)
+
+        elif input_book:
+            # get curenncy value from db and take usd and eu value from there
+            currency = Currency.objects.last()
+            currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
+            students = Student.objects.filter(book__title=input_book)
+            context = {
+                'students': students,
+                'currency': currency_list,
+            }
+            return render(request, 'list_of_students.html', context=context)
+
+        else:
+            students = Student.objects.all()
+            context = {
+                'students': students,
+                'currency': currency_list,
+                       }
+            return render(request, 'list_of_students.html', context=context)
 
 
 class UpdateStudent(View):
