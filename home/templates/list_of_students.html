@@ -5,17 +5,26 @@
 {% block 'body' %}
 
 <header>
-  <div class="navbar navbar-dark bg-dark shadow-sm">
-    <div class="container">
+  <div class="navbar navbar-dark bg-secondary shadow-sm">
+    <div class="container-sm">
       <h3 class="navbar-brand d-flex align-items-center">
+
         <strong>List of students</strong>
-        <h4><a href="{% url 'page_add_student' %}"><button type="button" class="btn btn-sm btn-outline-secondary">Add new student</button></a></h4>
+          <div class="container justify-content-md-end">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{% url 'page_add_student' %}"><button type="button" class="btn btn-light">Add new student</button></a>
+            <a href="{% url 'data_json' %}"><button type="button" class="btn btn-info">As Json</button></a>
+            <a href="{% url 'data_csv' %}"><button type="button" class="btn btn-info">As CSV</button></a>
+            </div>
+          </div>
+
+
       </h3>
     </div>
   </div>
 </header>
 <div class="container">
-<h5>USD: <b>{{currency.0}}</b> EU: <b>{{currency.1}}</b></h5>
+<h6>USD: <b>{{currency.0}}</b> EU: <b>{{currency.1}}</b></h6>
 </div>
 <main>
 
