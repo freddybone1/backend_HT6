@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse
 from django.views import View
 
-from home.forms import StudentForm, BookForm, SubjectForm, StudentToSubject, StudentToSomeObject, TeacherForm  # noqa
+from home.forms import StudentForm, BookForm, SubjectForm, StudentToSomeObject, TeacherForm  # noqa
 from home.models import Student, Teacher, Book, Subject, Currency  # noqa
 
 
