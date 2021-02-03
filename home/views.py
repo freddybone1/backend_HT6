@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.views import View
 
 from backend_HT5.celery import simple_task
+from home.emails import send_email
 from home.forms import StudentForm  # noqa
 from home.models import Student, Teacher, Book, Currency  # noqa
 
@@ -104,3 +105,9 @@ class StudentBook(View):
         }
 
         return render(request, 'student_books.html', context=context)
+
+
+class SendEmailView(View):
+    def get(self,request):
+        send_email()
+        return HttpResponse()
