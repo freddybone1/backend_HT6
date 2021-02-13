@@ -130,12 +130,16 @@ CELERY_BEAT_SCHEDULE = {
     'get_currency_from_privatbank': {
         'task': 'home.tasks.parse_currency',
         'schedule': crontab(minute='0', hour='1,13'),
+    },
+    'send_email': {
+        'task': 'home.tasks.send_email_celery',
+        'schedule': crontab()
     }
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = True  # security check
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'info.freddybone@gmail.com'
 EMAIL_HOST_PASSWORD = 'h3767542'

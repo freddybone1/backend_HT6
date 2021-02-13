@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse
 from django.views import View
@@ -7,6 +7,7 @@ from backend_HT5.celery import simple_task
 from home.emails import send_email
 from home.forms import StudentForm  # noqa
 from home.models import Student, Teacher, Book, Currency  # noqa
+from home.tasks import send_email_celery
 
 
 class AddStudent(View):
@@ -108,6 +109,12 @@ class StudentBook(View):
 
 
 class SendEmailView(View):
-    def get(self,request):
-        send_email()
-        return HttpResponse()
+    """
+    Celery send an email(with template) when visit that page
+    """
+    def get(self, request):
+        try:
+            send_email_celery(['hoodback@gmail.com', ]).delay()
+
+        except AttributeError:
+            return HttpResponse('Email sent!')
