@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('add/', AddStudent.as_view(), name='page_add_student'),
     path('list/', ShowStudent.as_view(), name='page_list_students'),
-    path('list/up/<id>/', UpdateStudent.as_view(), name='page_update_students'),  # noqa
+    path('list/up/<pk>', UpdateStudent.as_view(), name='page_update_students'),  # noqa
 
     path('list/books', StudentBook.as_view(), name='page_books_students'),
     path('email/', SendEmailView.as_view(), name='page_send_email')

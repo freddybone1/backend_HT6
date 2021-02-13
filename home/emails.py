@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.template.loader import get_template
 
-from backend_HT5 import settings
+
 from django.core.mail import send_mail
 
 
