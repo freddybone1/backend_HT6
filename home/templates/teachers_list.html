@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %} Subjects {% endblock %}
+{% block title %} Teachers {% endblock %}
 
 {% block 'body' %}
+
+
+
 
 <header xmlns="http://www.w3.org/1999/html">
   <div class="navbar navbar-dark bg-secondary shadow-sm">
     <div class="container">
       <h3 class="navbar-brand d-flex align-items-center">
-        <strong>List of subjects</strong>
+        <strong>List of teachers</strong>
       </h3>
     </div>
   </div>
@@ -17,13 +20,13 @@
 
 </p>
 <div class="container">
-        {% for subject in subjects %}
+        {%for teacher in teachers%}
     <div class="row">
-        <a href="{%url 'page_subject_update' id=subject.id%}" class="text-decoration-none">
-            <h1 class="display-4 bg-warning link-dark">{{subject.title}} </h1></a><h6>Click on title to change info</h6>
+        <a href="{%url 'page_teacher_update' id=teacher.id%}" class="text-decoration-none">
+            <h1 class="display-4 bg-warning link-dark">{{teacher.name}} </h1></a><h6>Click on title to change info</h6>
         <p class="lead">
-            <p class="fs-4 text-muted" >Students of {{subject.title}} this year</p>
-                {% for student in subject.student.all %}
+            <p class="fs-4 text-muted" >Students of {{teacher.name}} this year</p>
+                {%for student in teacher.students.all%}
                     <div class="col-6 col-sm-2">
                     <p><em>{{student.name}} {{student.surname}}</em></p>
                     </div>

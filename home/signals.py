@@ -21,9 +21,4 @@ def which_gender(sender, instance, **kwargs):
     faker = Faker()
     instance.sex = faker.bothify(text='?', letters='FMU')
 
-@receiver(pre_delete, sender=Student)
-def no_delete(sender, instance, **kwargs):
-    """
-    Signal doesnt allow simple user to delete any student from database
-    """
-    raise Exception('You haven\'t permission to delete')
+

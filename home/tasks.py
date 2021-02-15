@@ -1,6 +1,7 @@
 import requests
 from celery import shared_task, chain
 
+from home.emails import send_email
 from home.models import Currency
 
 
@@ -36,3 +37,9 @@ def parse_currency():
         get_currency.si()
         |
         save_currency.s())()
+
+
+@shared_task
+def send_email_celery(recipient_list=None):
+    send_email(recipient_list)
+    return True

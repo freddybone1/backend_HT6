@@ -3,12 +3,31 @@
 {% block title %} Students books {% endblock %}
 
 {% block 'body' %}
+
+<header>
+  <div class="navbar navbar-dark bg-dark shadow-sm">
+    <div class="container">
+      <h3 class="navbar-brand d-flex align-items-center">
+        <strong>{% block page_name %}Students' books{% endblock %}</strong>
+        <h4><a href="{% url 'page_add_student' %}"><button type="button" class="btn btn-sm btn-outline-secondary">Add new student</button></a></h4>
+      </h3>
+    </div>
+  </div>
+</header>
 {% for student in students%}
-<li>{{student.book.title}}  |   {{student.name}}  |   {{student.subject.title}}  |  {{student.teachers}} </li>
+<div class="container">
+  <div class="row align-items-start">
+    <div class="col">
+      {{student.name}} {{student.surname}}
+    </div>
+    <div class="col">
+      <a href="{%url 'page_books_update' id=student.id%}">{{student.book.title}}</a>
+    </div>
+    <div class="col">
 
-<!--<li>{{student.book.title}}  |   {{student.name}}  |   {{student.subject.title}}  |  {% if student.teachers.name %} {{student.teachers.name}} {% else %} No teacher {% endif %}</li>-->
-
+    </div>
+  </div>
+</div>
 {% endfor %}
 
-{% include 'footer.html' %}
 {% endblock %}
