@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %} Update subject {% endblock %}
+
+{% block 'body' %}
+
+
+
+<header xmlns="http://www.w3.org/1999/html">
+  <div class="navbar navbar-dark bg-secondary shadow-sm">
+    <div class="container">
+      <h3 class="navbar-brand d-flex align-items-center">
+        <strong>{{subject.title}}</strong>
+      </h3>
+    </div>
+  </div>
+</header>
+<p class="lead">
+
+</p>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <p class="lead">
+            <p><em>Type student id, which has no subject</em></p>
+            </p>
+            <form method="POST" action="{% url 'page_subject_update' id=subject.id %}">
+                    {% csrf_token %}
+                <div class="col">
+                    <div class="row justify-content-sm-center">
+                    {%for field in student_form %}
+                    {{ field }}
+                    {% endfor %}
+                    <button type="submit" name='Add student' class="btn btn-primary mb-3">Add student</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col"></div>
+
+        <div class="col">
+            <p class="lead">
+            <p><em>You can change subject title via this form</em></p>
+            </p>
+            <form method="POST" action="{% url 'page_subject_update' id=subject.id %}">
+                {% csrf_token %}
+                <div class="row">
+                {% for field in form%}
+                {{field}}
+                {% endfor %}
+
+                <!-- button to save changes in subject . use name tag to identify it in view.return id of subject     -->
+                <button type="submit" name="Save" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<main>
+
+<div class="album py-5 bg-secondary">
+
+     <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-md-4 g-4">
+            {% for student in subject.student.all%}
+                <div class="col">
+                    <form method="POST" action="{% url 'page_subject_update' id=student.id %}">
+        {% csrf_token %}
+
+
+        <div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{student.name}} {{student.surname}}</h5>
+    <p class="card-text">'{{student.book.title}}</p>
+    <button type="submit" name="DELETE" class="btn btn-danger">DELETE</button>
+  </div>
+</div>
+            </form>
+                </div>
+                {% endfor %}
+            </div>
+    </div>
+</div>
+</main>
+
+
+
+
+
+
+
+
+
+{% include 'footer.html' %}
+{% endblock %}
