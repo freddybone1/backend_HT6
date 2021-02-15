@@ -1,9 +1,12 @@
 import csv
 
+from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import cache_page
 
 from backend_HT5.celery import simple_task
 from home.forms import StudentForm  # noqa
@@ -37,6 +40,7 @@ class AddStudent(View):
         return HttpResponseRedirect(reverse('page_list_students'))
 
 
+@method_decorator(cache_page(settings.CHACHE_TTL), name='dispatch')
 class ShowStudent(View):
     """
     Function just show full list of students' name using '/list' - link
@@ -144,6 +148,7 @@ class CsvView(View):
                 student.subject.title if student.subject else None,
             ])
         return response
+
 
 class MainView(View):
     def get(self, request):
