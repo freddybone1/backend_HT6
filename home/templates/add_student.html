@@ -20,7 +20,7 @@
     <div class="col">
       <form method="POST" action="{% url 'page_add_student'%}">
     {% csrf_token %}
-    {% for field in student_form %}
+    {% for field in form %}
     <div class="col-md-6">
 <!--        <label for= "{{student_form.field}}" class="{{student_form}}">{{field.name.capitalize}}</label>-->
 <!--        <input type="text" class="{{field.first}}" id="{{student_form.field}}">-->

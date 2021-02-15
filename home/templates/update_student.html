@@ -18,9 +18,9 @@
     <div class="col">
     </div>
     <div class="col">
-      <form method="POST" action="{% url 'page_update_students' id=student.id %}">
+      <form method="POST">
     {% csrf_token %}
-    {% for field in student_form %}
+    {% for field in form %}
     <div class="col-md-6">
         {{field.name.capitalize}}
         </div>

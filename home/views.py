@@ -4,129 +4,77 @@ import csv
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic import ListView, CreateView, UpdateView
+
+from home.forms import StudentForm  # noqa
+from home.models import Student, Teacher, Book, Currency  # noqa
 
 from home.forms import StudentForm, BookForm, SubjectForm, StudentToSomeObject, TeacherForm  # noqa
 from home.models import Student, Teacher, Book, Subject, Currency  # noqa
+from home.tasks import send_email_celery
 
 
-class AddStudent(View):
+
+class AddStudent(CreateView):
     """
     Generates form which need to create new student.
     If the process is OK - redirect to /list page.
     """
-
-    def get(self, request):
-        student_form = StudentForm()
-        context = {
-            'student_form': student_form,
-        }
-        return render(request, 'add_student.html', context=context)
-
-    def post(self, request):
-        """
-        Save new student's data into database
-        """
-        student_form = StudentForm(request.POST)
-        # Check if the data of new student is valid
-        # if student_form.is_valid():
-        #     student_form.save()
-        # else:
-        #     return HttpResponse("problem")
-        student_form.save()
-        return HttpResponseRedirect(reverse('page_list_students'))
+    model = Student
+    template_name = 'add_student.html'
+    fields = ['name',
+              'surname',
+              'age',
+              'sex',
+              'address',
+              'birthday',
+              'email',
+              'social_url',
+              ]
+    success_url = reverse_lazy('page_list_students')
 
 
-class ShowStudent(View):
+class ShowStudent(ListView):
     """
     Function just show full list of students' name using '/list' - link
     """
+    model = Student
+    template_name = 'list_of_students.html'
+    context_object_name = 'currency'
 
-    def get(self, request):
 
-        # get curenncy value from db and take usd and eu value from there
+    def get_context_data(self, **kwargs):
         currency = Currency.objects.last()
         currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
 
-        # Catch data from forms on the page, using input_field name attribute
-        input_teacher = request.GET.get("search_teacher")
-        input_subject = request.GET.get("search_subject")
-        input_book = request.GET.get('search_book')
-
-        if input_teacher:
-            # get curenncy value from db and take usd and eu value from there
-            currency = Currency.objects.last()
-            currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
-
-            students = Student.objects.filter(teachers__name=input_teacher)
-            context = {
-                'students': students,
-                'currency': currency_list,
-            }
-            return render(request, 'list_of_students.html', context=context)
-
-        elif input_subject:
-            # get curenncy value from db and take usd and eu value from there
-            currency = Currency.objects.last()
-            currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
-
-            students = Student.objects.filter(subject__title=input_subject)
-            context = {
-                'students': students,
-                'currency': currency_list,
-            }
-            return render(request, 'list_of_students.html', context=context)
-
-        elif input_book:
-            # get curenncy value from db and take usd and eu value from there
-            currency = Currency.objects.last()
-            currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
-            students = Student.objects.filter(book__title=input_book)
-            context = {
-                'students': students,
-                'currency': currency_list,
-            }
-            return render(request, 'list_of_students.html', context=context)
-
-        else:
-            students = Student.objects.all()
-            context = {
-                'students': students,
-                'currency': currency_list,
-                       }
-            return render(request, 'list_of_students.html', context=context)
+        context = super(ShowStudent, self).get_context_data(**kwargs)
+        context.update({
+            'currency': currency_list,
 
 
-class UpdateStudent(View):
 
-    def get(self, request, id):
-        """
-        Func allow to update info about student using list/up/<id>
-        """
-        student = get_object_or_404(Student, id=id)
+        })
+        return context
 
-        student_form = StudentForm(instance=student)
+    def get_queryset(self):
+        return Student.objects.all()
 
-        context = {
-            'student_form': student_form,
-            'student': student,
-        }
 
-        return render(request, 'update_student.html', context=context)
-
-    def post(self, request, id):
-        """
-        Function save changes in student objects in database
-        """
-        student = get_object_or_404(Student, id=id)
-
-        student_form = StudentForm(request.POST, instance=student)
-
-        if student_form.is_valid():
-            student_form.save()
-
-        return redirect(reverse('page_list_students'))
+class UpdateStudent(UpdateView):
+    model = Student
+    fields = ['name',
+              'surname',
+              'age',
+              'sex',
+              'address',
+              'birthday',
+              'email',
+              'social_url',
+              ]
+    template_name = 'update_student.html'
+    success_url = reverse_lazy('page_list_students')
 
 
 class StudentBook(View):
@@ -143,6 +91,19 @@ class StudentBook(View):
         }
 
         return render(request, 'student_books.html', context=context)
+
+
+class SendEmailView(View):
+    """
+    Celery send an email(with template) when visit that page
+    """
+
+    def get(self, request):
+        try:
+            send_email_celery(['hoodback@gmail.com', ]).delay()
+
+        except AttributeError:
+            return HttpResponse('Email sent!')
 
 
 class JsonView(View):

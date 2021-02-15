@@ -14,9 +14,9 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from celery.schedules import crontab
+from django.conf.global_settings import EMAIL_BACKEND, EMAIL_HOST
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -30,7 +30,6 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '0.0.0.0',
                  ]
-
 
 # Application definition
 
@@ -79,7 +78,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend_HT5.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -89,7 +87,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -102,14 +99,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',  # noqa
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',# noqa
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',  # noqa
 
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',# noqa
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',  # noqa
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -124,12 +120,10 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
 
 CELERY_BROKER_URL = 'amqp://localhost'
 CELERY_RESULT_BACKEND = 'rpc://localhost'
@@ -138,5 +132,16 @@ CELERY_BEAT_SCHEDULE = {
     'get_currency_from_privatbank': {
         'task': 'home.tasks.parse_currency',
         'schedule': crontab(minute='0', hour='1,13'),
+    },
+    'send_email': {
+        'task': 'home.tasks.send_email_celery',
+        'schedule': crontab()
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # noqa
+EMAIL_HOST = 'smtp.gmail.com'  # noqa
+EMAIL_USE_TLS = True  # security check
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'info.freddybone@gmail.com'
+EMAIL_HOST_PASSWORD = 'h3767542'
