@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %} Main page {% endblock %}
+
+{% block 'body' %}
+
+<header>
+  <div class="navbar navbar-dark bg-warning shadow-sm">
+    <div class="container-sm">
+      <h3 class="navbar-brand d-flex align-items-center">
+
+        <strong>Application content pages</strong>
+          <div class="container justify-content-md-end">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+            </div>
+          </div>
+
+
+      </h3>
+    </div>
+  </div>
+</header>
+
+<br>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Page</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td><a href="{% url 'page_list_students' %}">http://127.0.0.1:8000/list</a></td>
+      <td>Full list of students</td>
+    </tr>
+
+    <tr>
+      <td><a href="{% url 'page_add_student' %}">http://127.0.0.1:8000/add</a></td>
+      <td>If you need to add additional student by your own</td>
+    </tr>
+
+    <tr>
+      <td><a href="{% url 'data_json' %}">http://127.0.0.1:8000/json</a></td>
+      <td>Page to show the data about students in json format</td>
+    </tr>
+
+    <tr>
+      <td><a href="{% url 'data_csv' %}">http://127.0.0.1:8000/csv</a></td>
+      <td>Page to download the data about students in csv file</td>
+    </tr>
+
+    <tr>
+      <td><a href="{% url 'page_books_students' %}">http://127.0.0.1:8000/list/books</a></td>
+      <td>Page give access to students books</td>
+    </tr>
+
+  </tbody>
+</table>
+<br>
+{% include 'footer.html' %}
+{% endblock %}

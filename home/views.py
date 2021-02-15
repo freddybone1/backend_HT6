@@ -1,4 +1,8 @@
-from django.http import HttpResponse
+
+import csv
+
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse_lazy
 from django.views import View
@@ -94,3 +98,45 @@ class SendEmailView(View):
 
         except AttributeError:
             return HttpResponse('Email sent!')
+
+
+class JsonView(View):
+    def get(self, request):
+        """
+        func transform query set of student objects to list of dict which we are send as JSON response
+        """
+        students = Student.objects.all()
+        return JsonResponse({"students": list(students.values(
+            "name",
+            "surname",
+            "book__title",
+            "subject__title",
+        )),
+        })
+
+
+class CsvView(View):
+    def get(self, request):
+        """
+        func create ad full csv file with selected data and allow user to download it
+
+        """
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = "attachment; filename='data_students.csv'"
+
+        writer = csv.writer(response)
+        writer.writerow(["Name", "Surname", "Book", 'Subject'])
+
+        students = Student.objects.all()
+        for student in students:
+            writer.writerow([
+                student.name,
+                student.surname,
+                student.book.title if student.book else None,
+                student.subject.title if student.subject else None,
+            ])
+        return response
+
+class MainView(View):
+    def get(self, request):
+        return render(request, 'main_page.html')

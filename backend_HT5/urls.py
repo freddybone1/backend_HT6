@@ -16,14 +16,21 @@ Including another URLconf
 
 from django.contrib import admin  # noqa
 from django.urls import path  # noqa
-from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, SendEmailView  # noqa
+
+from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView, SendEmailView  # noqa
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('add/', AddStudent.as_view(), name='page_add_student'),
     path('list/', ShowStudent.as_view(), name='page_list_students'),
     path('list/up/<pk>', UpdateStudent.as_view(), name='page_update_students'),  # noqa
-
     path('list/books', StudentBook.as_view(), name='page_books_students'),
+
     path('email/', SendEmailView.as_view(), name='page_send_email')
+
+    path('json_view', JsonView.as_view(), name='data_json'),
+    path('csv_view', CsvView.as_view(), name='data_csv'),
+
+    path('', MainView.as_view(), name='main_page')
+
 ]
