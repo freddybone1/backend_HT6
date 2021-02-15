@@ -17,14 +17,7 @@ Including another URLconf
 from django.contrib import admin  # noqa
 from django.urls import path  # noqa
 
-
-from home.views import AddStudent,
-ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView, StudentBookUpdate, SubjectList, SubjectUpdate, TeacherUpdate, TeachersList, SendEmailView  # noqa
-
-
-from home.views import AddStudent, 
-ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView  # noqa
-
+from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView, StudentBookUpdate, SubjectList, SubjectUpdate, TeacherUpdate, TeachersList, SendEmailView  # noqa
 
 
 urlpatterns = [
