@@ -1,12 +1,17 @@
 
 import csv
 
+from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
-from django.urls import reverse_lazy
+
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import cache_page
+from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView
+
 
 from home.forms import StudentForm  # noqa
 from home.models import Student, Teacher, Book, Currency  # noqa
@@ -34,8 +39,9 @@ class AddStudent(CreateView):
               'social_url',
               ]
     success_url = reverse_lazy('page_list_students')
+    
 
-
+@method_decorator(cache_page(settings.CHACHE_TTL), name='dispatch')
 class ShowStudent(ListView):
     """
     Function just show full list of students' name using '/list' - link
@@ -44,7 +50,6 @@ class ShowStudent(ListView):
     template_name = 'list_of_students.html'
     context_object_name = 'currency'
 
-
     def get_context_data(self, **kwargs):
         currency = Currency.objects.last()
         currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
@@ -52,9 +57,6 @@ class ShowStudent(ListView):
         context = super(ShowStudent, self).get_context_data(**kwargs)
         context.update({
             'currency': currency_list,
-
-
-
         })
         return context
 
