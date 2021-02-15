@@ -26,11 +26,11 @@ urlpatterns = [
     path('list/up/<pk>', UpdateStudent.as_view(), name='page_update_students'),  # noqa
     path('list/books', StudentBook.as_view(), name='page_books_students'),
 
-    path('email/', SendEmailView.as_view(), name='page_send_email')
+    path('email/', SendEmailView.as_view(), name='page_send_email'),
 
     path('json_view', JsonView.as_view(), name='data_json'),
     path('csv_view', CsvView.as_view(), name='data_csv'),
 
-    path('', MainView.as_view(), name='main_page')
+    path('', MainView.as_view(), name='main_page'),
 
 ]
