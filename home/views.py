@@ -1,13 +1,14 @@
+
 import csv
 
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.urls import reverse
 from django.views import View
 
-from backend_HT5.celery import simple_task
-from home.forms import StudentForm  # noqa
-from home.models import Student, Teacher, Book, Currency  # noqa
+from home.forms import StudentForm, BookForm, SubjectForm, StudentToSomeObject, TeacherForm  # noqa
+from home.models import Student, Teacher, Book, Subject, Currency  # noqa
 
 
 class AddStudent(View):
@@ -43,21 +44,58 @@ class ShowStudent(View):
     """
 
     def get(self, request):
-        students = Student.objects.all()
-        teachers = Teacher.objects.all()
-        # running celery task while enter list page
-        simple_task.delay()
 
         # get curenncy value from db and take usd and eu value from there
         currency = Currency.objects.last()
         currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
 
-        return render(request=request,
-                      template_name='list_of_students.html',
-                      context={'students': students,
-                               'teachers': teachers,
-                               'currency': currency_list
-                               })
+        # Catch data from forms on the page, using input_field name attribute
+        input_teacher = request.GET.get("search_teacher")
+        input_subject = request.GET.get("search_subject")
+        input_book = request.GET.get('search_book')
+
+        if input_teacher:
+            # get curenncy value from db and take usd and eu value from there
+            currency = Currency.objects.last()
+            currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
+
+            students = Student.objects.filter(teachers__name=input_teacher)
+            context = {
+                'students': students,
+                'currency': currency_list,
+            }
+            return render(request, 'list_of_students.html', context=context)
+
+        elif input_subject:
+            # get curenncy value from db and take usd and eu value from there
+            currency = Currency.objects.last()
+            currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
+
+            students = Student.objects.filter(subject__title=input_subject)
+            context = {
+                'students': students,
+                'currency': currency_list,
+            }
+            return render(request, 'list_of_students.html', context=context)
+
+        elif input_book:
+            # get curenncy value from db and take usd and eu value from there
+            currency = Currency.objects.last()
+            currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
+            students = Student.objects.filter(book__title=input_book)
+            context = {
+                'students': students,
+                'currency': currency_list,
+            }
+            return render(request, 'list_of_students.html', context=context)
+
+        else:
+            students = Student.objects.all()
+            context = {
+                'students': students,
+                'currency': currency_list,
+                       }
+            return render(request, 'list_of_students.html', context=context)
 
 
 class UpdateStudent(View):
@@ -94,15 +132,14 @@ class UpdateStudent(View):
 class StudentBook(View):
     def get(self, request):
         """
-        Func allow to update info about student using list/up/<id>
+        Func shows all students names and their books
+        and add ability to delete book and student via link
         """
 
-        books = Book.objects.all()
         students = Student.objects.all()
 
         context = {
-            'books': books,
-            'students': students
+            'students': students,
         }
 
         return render(request, 'student_books.html', context=context)
@@ -145,6 +182,172 @@ class CsvView(View):
             ])
         return response
 
+
 class MainView(View):
     def get(self, request):
         return render(request, 'main_page.html')
+
+
+class StudentBookUpdate(View):
+    """
+    Function delete book and related student from database. Also, it allows to change title of a book
+    """
+
+    def get(self, request, id):
+        student = get_object_or_404(Student, id=id)
+        # Send to page form with student's book info, which we are able to change
+        book = student.book
+        book_form = BookForm(instance=book)
+        context = {
+            'student': student,
+            'form': book_form,
+
+        }
+        return render(request, 'student_book_update.html', context=context)
+
+    def post(self, request, id):
+        # Make a tree to define which button was pushed
+        if 'Save' in request.POST:
+            student = get_object_or_404(Student, id=id)
+
+            book = student.book
+            book_form = BookForm(request.POST, instance=book)
+            # Check if the form is valid
+            if book_form.is_valid():
+                book_form.save()
+                return redirect('page_books_students')
+            else:
+                return HttpResponse(u'Upps, something went wrong')
+
+        elif 'DELETE' in request.POST:
+            book = get_object_or_404(Book, id=id)
+            book.delete()
+            return HttpResponseRedirect(reverse('page_books_students'))
+
+
+class SubjectList(View):
+    def get(self, request):
+        subjects = Subject.objects.all()
+
+        context = {
+
+            'subjects': subjects,
+
+        }
+        return render(request, 'subject_list.html', context=context)
+
+
+class SubjectUpdate(View):
+    """
+    Class give possibility to see relations between subject and its students.
+     Also you can change title of related subject and students relations.
+    """
+
+    def get(self, request, id):
+        subject = get_object_or_404(Subject, id=id)
+
+        subject_form = SubjectForm(instance=subject)
+        student_form = StudentToSomeObject()
+
+        context = {
+            'subject': subject,
+            'form': subject_form,
+            'student_form': student_form,
+        }
+        return render(request, 'update_subject.html', context=context)
+
+    def post(self, request, id):
+        if 'Save' in request.POST:
+            subject = get_object_or_404(Subject, id=id)
+
+            subject_form = SubjectForm(request.POST, instance=subject)
+            # Check if the form is valid
+            if subject_form.is_valid():
+                subject_form.save()
+                return redirect('page_subject_list')
+            else:
+                return HttpResponse(u'Upps, something went wrong')
+        elif 'DELETE' in request.POST:
+            student = get_object_or_404(Student, id=id)
+            subjects = Subject.objects.all()
+            for subject in subjects:
+                if student in subject.student.all():
+                    subject.student.remove(student)
+            return HttpResponseRedirect(reverse('page_subject_list'))
+
+        elif 'Add student' in request.POST:
+            subjects = Subject.objects.all()
+            # забираем данные из нашей кастомной формы
+            form = StudentToSomeObject(request.POST)
+            # забираем данные из нашей кастомной формы обязательно через .is_valid() -> .cleaned_data.get(field)
+            if form.is_valid():
+                # сохраняем данные из формы, которая не привязана к нашим моделям, по переменой филда из формы
+                student_id = form.cleaned_data.get('student_id')
+                student = get_object_or_404(Student, id=int(student_id))
+                for subject in subjects:
+                    if student not in subject.student.all():
+                        subject.student.add(student)
+                        return HttpResponseRedirect(reverse('page_subject_list'))
+
+            else:
+                return HttpResponse('Bad data format, please use only integers')
+
+
+class TeachersList(View):
+    def get(self, request):
+        student = Student.objects.all()
+        teachers = Teacher.objects.all()
+
+        context = {
+            "teachers": teachers,
+            'student': student,
+        }
+        return render(request, 'teachers_list.html', context=context)
+
+
+class TeacherUpdate(View):
+    def get(self, request, id):
+        teacher = get_object_or_404(Teacher, id=id)
+
+        teacher_form = TeacherForm(instance=teacher)
+        student_form = StudentToSomeObject()
+
+        context = {
+            'teacher': teacher,
+            'form': teacher_form,
+            'student_form': student_form,
+        }
+        return render(request, 'update_teacher.html', context=context)
+
+    def post(self, request, id):
+        if 'Save' in request.POST:
+            teacher = get_object_or_404(Teacher, id=id)
+
+            teacher_form = TeacherForm(request.POST, instance=teacher)
+
+            if teacher_form.is_valid():
+                teacher_form.save()
+                return redirect('page_teacher_list')
+            else:
+                return HttpResponse(u'Upps, something went wrong')
+        elif 'DELETE' in request.POST:
+            student = get_object_or_404(Student, id=id)
+            teachers = Teacher.objects.all()
+
+            for teacher in teachers:
+                if student in teacher.students.all():
+                    teacher.students.remove(student)
+            return HttpResponseRedirect(reverse('page_teacher_list'))
+
+        elif 'Add student' in request.POST:
+            teachers = Teacher.objects.all()
+            form = StudentToSomeObject(request.POST)
+            if form.is_valid():
+                student_id = form.cleaned_data.get('student_id')
+                student = get_object_or_404(Student, id=int(student_id))
+                for teacher in teachers:
+                    if student not in teacher.students.all():
+                        teacher.students.add(student)
+                        return HttpResponseRedirect(reverse('page_teacher_list'))
+            else:
+                return HttpResponse('Bad data format, please use only integers')
