@@ -49,20 +49,33 @@ class ShowStudent(ListView):
         currency = Currency.objects.last()
         currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
 
+        teacher = self.request.GET.get('search_teacher')
         context = super(ShowStudent, self).get_context_data(**kwargs)
         context.update({
             'currency': currency_list,
         })
+
         return context
 
     def get_queryset(self):
-
-
-
+        """
+        rewrite func to catch get data and search for navfild input an the page.
+        :return: filtered queryset of students
+        """
+        teacher = self.request.GET.get('search_teacher')
+        subject = self.request.GET.get('search_subject')
+        book = self.request.GET.get('search_book')
+        if teacher:
+            students = Student.objects.filter(teachers__name=teacher)
+            return students
+        elif subject:
+            students = Student.objects.filter(subject__title=subject)
+            return students
+        elif book:
+            students = Student.objects.filter(book__title=book)
+            return students
 
         return Student.objects.all()
-
-
 
 
 class UpdateStudent(UpdateView):
