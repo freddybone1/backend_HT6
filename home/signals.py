@@ -1,8 +1,10 @@
+import uuid
+
 from django.db.models.signals import pre_save, pre_delete
 from django.dispatch import receiver
 from faker import Faker
 
-from home.models import Student
+from home.models import Student, Book, Teacher
 
 
 @receiver(pre_save, sender=Student)
@@ -22,3 +24,17 @@ def which_gender(sender, instance, **kwargs):
     instance.sex = faker.bothify(text='?', letters='FMU')
 
 
+@receiver(pre_save, sender=Student)
+def add_book_to_new_student(sender, instance, **kwargs):
+    herd = instance.book
+    if not instance.book:
+        new_book = Book()
+        new_book.title = uuid.uuid4()
+        new_book.save()
+        instance.book = new_book
+
+
+@receiver(pre_save, sender=Student)
+def pick_teacher_for_student(sender, instance, **kwargs):
+    teacher_list = Teacher.objects.all()
+    

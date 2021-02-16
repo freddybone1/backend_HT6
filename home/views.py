@@ -88,25 +88,19 @@ class UpdateStudent(UpdateView):
               'birthday',
               'email',
               'social_url',
+
               ]
     template_name = 'update_student.html'
     success_url = reverse_lazy('page_list_students')
 
 
-class StudentBook(View):
-    def get(self, request):
-        """
-        Func shows all students names and their books
-        and add ability to delete book and student via link
-        """
-
-        students = Student.objects.all()
-
-        context = {
-            'students': students,
-        }
-
-        return render(request, 'student_books.html', context=context)
+class StudentBook(ListView):
+    """
+    Func shows all students names and their books
+    and add ability to delete book and student via link
+    """
+    model = Student
+    template_name = 'student_books.html'
 
 
 class SendEmailView(View):
@@ -202,16 +196,9 @@ class StudentBookUpdate(View):
             return HttpResponseRedirect(reverse('page_books_students'))
 
 
-class SubjectList(View):
-    def get(self, request):
-        subjects = Subject.objects.all()
-
-        context = {
-
-            'subjects': subjects,
-
-        }
-        return render(request, 'subject_list.html', context=context)
+class SubjectList(ListView):
+    model = Subject
+    template_name = 'subject_list.html'
 
 
 class SubjectUpdate(View):
@@ -270,16 +257,9 @@ class SubjectUpdate(View):
                 return HttpResponse('Bad data format, please use only integers')
 
 
-class TeachersList(View):
-    def get(self, request):
-        student = Student.objects.all()
-        teachers = Teacher.objects.all()
-
-        context = {
-            "teachers": teachers,
-            'student': student,
-        }
-        return render(request, 'teachers_list.html', context=context)
+class TeachersList(ListView):
+    model = Teacher
+    template_name = 'teachers_list.html'
 
 
 class TeacherUpdate(View):

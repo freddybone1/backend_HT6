@@ -4,9 +4,6 @@
 
 {% block 'body' %}
 
-
-
-
 <header xmlns="http://www.w3.org/1999/html">
   <div class="navbar navbar-dark bg-secondary shadow-sm">
     <div class="container">
@@ -20,11 +17,11 @@
 
 </p>
 <div class="container">
-        {%for teacher in teachers%}
+        {%for teacher in object_list%}
     <div class="row">
         <a href="{%url 'page_teacher_update' id=teacher.id%}" class="text-decoration-none">
             <h1 class="display-4 bg-warning link-dark">{{teacher.name}} </h1></a><h6>Click on title to change info</h6>
-        <p class="lead">
+                <p class="lead">
             <p class="fs-4 text-muted" >Students of {{teacher.name}} this year</p>
                 {%for student in teacher.students.all%}
                     <div class="col-6 col-sm-2">
@@ -33,7 +30,6 @@
                 {% endfor %}
     </div>
         {% endfor %}
-
 </div>
 {% include 'footer.html' %}
 {% endblock %}
