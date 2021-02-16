@@ -9,17 +9,12 @@ from django.shortcuts import render, redirect, get_object_or_404  # noqa
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import cache_page
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
-
-
-from home.forms import StudentForm  # noqa
-from home.models import Student, Teacher, Book, Currency  # noqa
 
 from home.forms import StudentForm, BookForm, SubjectForm, StudentToSomeObject, TeacherForm  # noqa
 from home.models import Student, Teacher, Book, Subject, Currency  # noqa
 from home.tasks import send_email_celery
-
 
 
 class AddStudent(CreateView):
@@ -41,7 +36,7 @@ class AddStudent(CreateView):
     success_url = reverse_lazy('page_list_students')
     
 
-@method_decorator(cache_page(settings.CHACHE_TTL), name='dispatch')
+#@method_decorator(cache_page(settings.CHACHE_TTL), name='dispatch')
 class ShowStudent(ListView):
     """
     Function just show full list of students' name using '/list' - link
@@ -61,7 +56,13 @@ class ShowStudent(ListView):
         return context
 
     def get_queryset(self):
+
+
+
+
         return Student.objects.all()
+
+
 
 
 class UpdateStudent(UpdateView):
