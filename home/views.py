@@ -159,41 +159,19 @@ class MainView(View):
         return render(request, 'main_page.html')
 
 
-class StudentBookUpdate(View):
-    """
-    Function delete book and related student from database. Also, it allows to change title of a book
-    """
+class StudentBookUpdate(UpdateView):
+    model = Student
+    fields = ['book']
+    success_url = 'page_books_students'
+    template_name = 'page_books_update'
 
-    def get(self, request, id):
-        student = get_object_or_404(Student, id=id)
-        # Send to page form with student's book info, which we are able to change
-        book = student.book
-        book_form = BookForm(instance=book)
-        context = {
-            'student': student,
-            'form': book_form,
+    def post(self, request, id, **kwargs):
+        """Def find and delete student in logic that we cant have student without book"""
+        if 'DELETE' in self.request.POST:
+            student_book = Student.objects.get(id=id)
+            student_book.delete()
 
-        }
-        return render(request, 'student_book_update.html', context=context)
-
-    def post(self, request, id):
-        # Make a tree to define which button was pushed
-        if 'Save' in request.POST:
-            student = get_object_or_404(Student, id=id)
-
-            book = student.book
-            book_form = BookForm(request.POST, instance=book)
-            # Check if the form is valid
-            if book_form.is_valid():
-                book_form.save()
-                return redirect('page_books_students')
-            else:
-                return HttpResponse(u'Upps, something went wrong')
-
-        elif 'DELETE' in request.POST:
-            book = get_object_or_404(Book, id=id)
-            book.delete()
-            return HttpResponseRedirect(reverse('page_books_students'))
+        return super(StudentBookUpdate, self).post(request, id)
 
 
 class SubjectList(ListView):
