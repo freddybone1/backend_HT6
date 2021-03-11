@@ -75,6 +75,22 @@
             <td>Page give access to list of teachers with permissions to change its data</td>
           </tr>
 
+          <tr class="bg-info">
+            <td><a href="{% url 'signin_page' %}">http://127.0.0.1:8000/signin/</a></td>
+            <td>You can log in here if you have an account</td>
+          </tr>
+
+          <tr class="bg-info">
+            <td><a href="{% url 'signup_page' %}">http://127.0.0.1:8000/signup/</a></td>
+            <td>You can  create your account here</td>
+          </tr>
+
+          <tr class="bg-info">
+            <td><a href="{% url 'signout_page' %}">http://127.0.0.1:8000/signout/</a></td>
+            <td>You can finish you session here</td>
+          </tr>
+
+
         </tbody>
       </table>
       <br>
@@ -82,6 +98,7 @@
     <div class="col">
     </div>
   </div>
+
 
 </div>
 {% include 'footer.html' %}

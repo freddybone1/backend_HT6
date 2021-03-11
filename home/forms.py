@@ -1,3 +1,5 @@
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.forms import ModelForm  # noqa
 from django import forms
 from home.models import Student, Book, Subject, Teacher  # noqa
@@ -40,3 +42,10 @@ class TeacherForm(ModelForm):
 
 class StudentToSomeObject(forms.Form):
     student_id = forms.CharField(label='student_id')
+
+
+class UserSignUpForm(UserCreationForm):
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')

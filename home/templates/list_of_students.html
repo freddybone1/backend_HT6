@@ -52,7 +52,7 @@
         <p class="lead"></p>
 
         <div class="container">
-
+            {% if user.is_authenticated %}
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-md-4 g-4">
                 {%for student in object_list %}
                 <div class="col">
@@ -78,6 +78,9 @@
                 </div>
                 {%endfor%}
             </div>
+            {%else%}
+            Please,  <a href="{% url 'signup_page' %}">sign up</a> or <a href="{% url 'signin_page' %}">log in</a>
+            {%endif%}
         </div>
 
     </div>

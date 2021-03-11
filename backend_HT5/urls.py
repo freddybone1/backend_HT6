@@ -17,16 +17,17 @@ Including another URLconf
 from django.contrib import admin  # noqa
 from django.urls import path  # noqa
 
-from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView, StudentBookUpdate, SubjectList, SubjectUpdate, TeacherUpdate, TeachersList, SendEmailView  # noqa
-
-
+from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView, \
+    StudentBookUpdate, SubjectList, SubjectUpdate, TeacherUpdate, TeachersList, SendEmailView, SignUpView, \
+    ActivateView, SignOutView, SignInView  # noqa
+# noqa
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('add/', AddStudent.as_view(), name='page_add_student'),
     path('list/', ShowStudent.as_view(), name='page_list_students'),
     path('list/up/<pk>', UpdateStudent.as_view(), name='page_update_students'),  # noqa
     path('list/books', StudentBook.as_view(), name='page_books_students'),
-    path('list/books/up/<id>', StudentBookUpdate.as_view(), name='page_books_update'),# noqa
+    path('list/books/up/<id>', StudentBookUpdate.as_view(), name='page_books_update'),  # noqa
 
     path('email/', SendEmailView.as_view(), name='page_send_email'),
 
@@ -36,9 +37,14 @@ urlpatterns = [
     path('', MainView.as_view(), name='main_page'),
 
     path('subject_list/', SubjectList.as_view(), name='page_subject_list'),
-    path('subject_list/up/<id>', SubjectUpdate.as_view(), name='page_subject_update'),# noqa
+    path('subject_list/up/<id>', SubjectUpdate.as_view(), name='page_subject_update'),  # noqa
 
     path('teacher_list/', TeachersList.as_view(), name='page_teacher_list'),
-    path('teacher_list/up/<id>', TeacherUpdate.as_view(), name='page_teacher_update'),# noqa
+    path('teacher_list/up/<id>', TeacherUpdate.as_view(), name='page_teacher_update'),  # noqa
+
+    path('signup/', SignUpView.as_view(), name='signup_page'),
+    path('activate/<uid>/<token>', ActivateView.as_view(), name='activate_page'),  # noqa
+    path('signout/', SignOutView.as_view(), name='signout_page'),
+    path('signin/', SignInView.as_view(), name='signin_page'),
 
 ]

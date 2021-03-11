@@ -14,7 +14,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from celery.schedules import crontab
-from django.conf.global_settings import EMAIL_BACKEND, EMAIL_HOST
+from django.conf.global_settings import EMAIL_BACKEND, EMAIL_HOST  # noqa
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,7 +29,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '0.0.0.0',
-    '127.0.0.1'
+    '127.0.0.1',
+    'localhost',
                  ]
 
 # Application definition
