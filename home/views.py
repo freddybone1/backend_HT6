@@ -1,18 +1,25 @@
-
 import csv
 
 from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
 
 from django.utils.decorators import method_decorator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from django.views.decorators.cache import cache_page
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
 
-from home.forms import StudentForm, BookForm, SubjectForm, StudentToSomeObject, TeacherForm  # noqa
+from home.emails import send_email_sign_up
+from home.forms import StudentForm, BookForm, SubjectForm, StudentToSomeObject, TeacherForm, UserSignUpForm  # noqa
 from home.models import Student, Teacher, Book, Subject, Currency  # noqa
 from home.tasks import send_email_celery
 
@@ -34,9 +41,9 @@ class AddStudent(CreateView):
               'social_url',
               ]
     success_url = reverse_lazy('page_list_students')
-    
 
-#@method_decorator(cache_page(settings.CHACHE_TTL), name='dispatch')
+
+# @method_decorator(cache_page(settings.CHACHE_TTL), name='dispatch')
 class ShowStudent(ListView):
     """
     Function just show full list of students' name using '/list' - link
@@ -286,3 +293,80 @@ class TeacherUpdate(View):
                         return HttpResponseRedirect(reverse('page_teacher_list'))
             else:
                 return HttpResponse('Bad data format, please use only integers')
+
+
+class SignUpView(View):
+    def get(self, request):
+        sign_up_form = UserSignUpForm()
+        return render(request, 'login/sign_up_form_page.html', context={
+            'form': sign_up_form,
+        })
+
+    def post(self, request):
+        sign_up_form = UserSignUpForm(request.POST)
+        if sign_up_form.is_valid():
+            # save user and make it unactive
+            user = sign_up_form.save()
+            user.is_active = False
+            user.set_password(request.POST['password1'])
+            user.save()
+
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+            activate_url = '{}/{}/{}'.format(
+                'http://localhost:8000/activate',
+                uid,
+                default_token_generator.make_token(user=user),
+            )
+
+            send_email_sign_up(
+                recipient_list=[user.email],
+                activate_url=activate_url,
+
+            )
+            return HttpResponse('Please, check your email-box')
+        else:
+            return HttpResponse('wrong data')
+
+
+class ActivateView(View):
+
+    def get(self, request, uid, token):
+        # get user by decoded pk
+        user = User.objects.get(pk=force_bytes(urlsafe_base64_decode(uid)))
+
+        if not user.is_active and default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+
+            # no need to do this, cose save() return instance of our user
+            # user = authenticate(username=user.username, password=user.password)
+
+            login(request, user=user)
+            return redirect('/list/')
+
+        return redirect('/list/')
+
+
+class SignOutView(View):
+
+    def get(self, request):
+        logout(request)
+        return redirect('/list/')
+
+
+class SignInView(View):
+
+    def get(self, request):
+        auth_form = AuthenticationForm()
+        return render(request, 'login/sign_in.html', context={
+            'form': auth_form,
+        })
+
+    def post(self, request):
+        auth_form = AuthenticationForm(request.POST)
+
+        user = authenticate(request=request, username=request.POST.get('username'),
+                            password=request.POST.get('password'))
+        login(request, user)
+        return redirect('/list/')
