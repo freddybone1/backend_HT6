@@ -58,6 +58,9 @@ MIDDLEWARE = [
     'backend_HT5.middleware.IdentifyResponseMiddleware',
 ]
 
+MEDIA_ROOT = '/home/f_bone/PycharmProjects/djangotest/backend_HT5/media'
+MEDIA_URL = '/media/'
+
 ROOT_URLCONF = 'backend_HT5.urls'
 
 TEMPLATES = [

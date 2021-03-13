@@ -13,7 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin  # noqa
 from django.urls import path  # noqa
 
@@ -47,4 +48,4 @@ urlpatterns = [
     path('signout/', SignOutView.as_view(), name='signout_page'),
     path('signin/', SignInView.as_view(), name='signin_page'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
