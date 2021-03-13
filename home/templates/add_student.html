@@ -18,7 +18,7 @@
 
     </div>
     <div class="col">
-      <form method="POST" action="{% url 'page_add_student'%}">
+      <form method="POST" action="{% url 'page_add_student'%}" enctype="multipart/form-data">
     {% csrf_token %}
     {% for field in form %}
     <div class="col-md-6">
