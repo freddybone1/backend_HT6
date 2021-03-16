@@ -18,6 +18,7 @@ class Student(Model):
     social_url = models.CharField(max_length=200, null=True)
     normalized_name = models.CharField(max_length=200, null=True)
     is_active = models.CharField(max_length=200, null=True)
+    picture = models.ImageField(null=True, upload_to='student_photo')
 
 
     subject = models.ForeignKey(to='home.Subject', on_delete=models.SET_NULL, null=True,

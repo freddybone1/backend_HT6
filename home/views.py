@@ -39,6 +39,7 @@ class AddStudent(CreateView):
               'birthday',
               'email',
               'social_url',
+              'picture',
               ]
     success_url = reverse_lazy('page_list_students')
 
@@ -95,7 +96,7 @@ class UpdateStudent(UpdateView):
               'birthday',
               'email',
               'social_url',
-
+              'picture',
               ]
     template_name = 'update_student.html'
     success_url = reverse_lazy('page_list_students')
