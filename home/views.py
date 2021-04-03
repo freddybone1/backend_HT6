@@ -17,10 +17,12 @@ from django.views import View
 from django.views.decorators.cache import cache_page
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
+from rest_framework.viewsets import ModelViewSet
 
 from home.emails import send_email_sign_up
 from home.forms import StudentForm, BookForm, SubjectForm, StudentToSomeObject, TeacherForm, UserSignUpForm  # noqa
 from home.models import Student, Teacher, Book, Subject, Currency  # noqa
+from home.serializers import StudentSerializer, SubjectSerializer, TeacherSerializer, BookSerializer
 from home.tasks import send_email_celery
 
 
@@ -371,3 +373,23 @@ class SignInView(View):
                             password=request.POST.get('password'))
         login(request, user)
         return redirect('/list/')
+
+
+class StudentViewSet(ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
+
+class SubjectViewSet(ModelViewSet):
+    queryset = Subject.objects.all()
+    serializer_class = SubjectSerializer
+
+
+class TeacherViewSet(ModelViewSet):
+    queryset = Teacher.objects.all()
+    serializer_class = TeacherSerializer
+
+
+class BookViewSet(ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer

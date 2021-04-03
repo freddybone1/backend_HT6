@@ -14,15 +14,46 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin  # noqa
-from django.urls import path  # noqa
+from django.urls import path, include  # noqa
+from rest_framework import routers
 
 from home.views import AddStudent, ShowStudent, UpdateStudent, StudentBook, JsonView, CsvView, MainView, \
     StudentBookUpdate, SubjectList, SubjectUpdate, TeacherUpdate, TeachersList, SendEmailView, SignUpView, \
-    ActivateView, SignOutView, SignInView  # noqa
+    ActivateView, SignOutView, SignInView, StudentViewSet, TeacherViewSet, SubjectViewSet, BookViewSet  # noqa
 # noqa
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+...
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+)
+
+router = routers.DefaultRouter()
+router.register(r'students', StudentViewSet, basename='students')
+router.register(r'teachers', TeacherViewSet, basename='teachers')
+router.register(r'subjects', SubjectViewSet, basename='subjects')
+router.register(r'books', BookViewSet, basename='books')
+
 urlpatterns = [
+    url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'), # noqa
+    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'), # noqa
+    url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'), # noqa
+
     path('admin/', admin.site.urls),
     path('add/', AddStudent.as_view(), name='page_add_student'),
     path('list/', ShowStudent.as_view(), name='page_list_students'),
@@ -36,6 +67,7 @@ urlpatterns = [
     path('csv_view', CsvView.as_view(), name='data_csv'),
 
     path('', MainView.as_view(), name='main_page'),
+    path('api/', include(router.urls)),
 
     path('subject_list/', SubjectList.as_view(), name='page_subject_list'),
     path('subject_list/up/<id>', SubjectUpdate.as_view(), name='page_subject_update'),  # noqa
