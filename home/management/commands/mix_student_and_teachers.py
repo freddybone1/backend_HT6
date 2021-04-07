@@ -1,4 +1,4 @@
-from random import random
+import random
 
 from django.core.management import BaseCommand
 
@@ -13,5 +13,6 @@ class Command(BaseCommand):
 
         for teacher in teachers:
             for _ in range(20):
-                teacher.students = random.choice(students)
+                teacher_students = teacher.students
+                teacher_students.add(random.choice(students))
 

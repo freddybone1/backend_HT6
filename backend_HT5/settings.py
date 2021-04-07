@@ -162,8 +162,8 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 10
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination', # noqa
+    'PAGE_SIZE': 20
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # noqa

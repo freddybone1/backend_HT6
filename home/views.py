@@ -1,6 +1,6 @@
 import csv
 
-from django.conf import settings
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
@@ -10,13 +10,15 @@ from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
 
-from django.utils.decorators import method_decorator
+from django.utils.decorators import method_decorator # noqa
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page  # noqa
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
 from rest_framework.viewsets import ModelViewSet
 
 from home.emails import send_email_sign_up
@@ -58,8 +60,6 @@ class ShowStudent(ListView):
     def get_context_data(self, **kwargs):
         currency = Currency.objects.last()
         currency_list = [currency.value[0]['buy'], currency.value[1]['buy']]
-
-        teacher = self.request.GET.get('search_teacher')
         context = super(ShowStudent, self).get_context_data(**kwargs)
         context.update({
             'currency': currency_list,
@@ -375,21 +375,44 @@ class SignInView(View):
         return redirect('/list/')
 
 
+# class StudentFilter(django_filters.FilterSet):
+#  надо переопределить поля модели -> сделать у студентов поле учителя, чтобы фильтровать по имени учителя
+# и добавить этот кастомный фильтер в ендпоинт
+#     class Meta:
+#         model = Student
+#         fields = ('teachers__name',)
+
+
 class StudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+
+    # add filters by model fields, this fields will not work if use custom filter
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_fields = ("name", )
+    # filter_class = StudentFilter
+    ordering_fields = ['name', ]
 
 
 class SubjectViewSet(ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_fields = ("title", )
+    ordering_fields = ['title', ]
 
 
 class TeacherViewSet(ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_fields = ("name", )
+    ordering_fields = ['name', ]
 
 
 class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_fields = ("title", )
+    ordering_fields = ['title', ]
