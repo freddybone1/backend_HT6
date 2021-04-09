@@ -17,11 +17,11 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    subject = SubjectSerializer()
+    # subject = SubjectSerializer()
 
     class Meta:
         model = Student
-        fields = ['name', 'age', 'email', 'subject', ]
+        fields = ['name', 'age', 'email', ]  # subject
 
 
 class TeacherSerializer(serializers.ModelSerializer):

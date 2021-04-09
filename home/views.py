@@ -1,10 +1,11 @@
 import csv
-
+import uuid
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
+from django.db import transaction
 
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 
@@ -18,7 +19,9 @@ from django.views.decorators.cache import cache_page  # noqa
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework.filters import OrderingFilter
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from home.emails import send_email_sign_up
@@ -392,6 +395,25 @@ class StudentViewSet(ModelViewSet):
     filterset_fields = ("name", )
     # filter_class = StudentFilter
     ordering_fields = ['name', ]
+
+    def create(self, request, *args, **kwargs):
+        """
+        Add transaction to create student and create a Book for him.
+        In case if data is not valid transaction cancel creation of the Book
+        """
+
+        new_book = Book()
+        new_book.title = uuid.uuid4()
+
+        student_data = request.data
+        student = Student.objects.create(name=student_data['name'], age=student_data['age'], email=student_data['email'])
+
+        student.book = new_book
+        with transaction.atomic():
+            new_book.save()
+
+        serializer = StudentSerializer()
+        return Response(serializer.data)
 
 
 class SubjectViewSet(ModelViewSet):
