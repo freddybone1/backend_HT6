@@ -98,6 +98,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        # 'REQUEST_ATOMIC': True  -> allow transaction to all methods and etc.
     }
 }
 
