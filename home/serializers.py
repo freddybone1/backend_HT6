@@ -28,7 +28,7 @@ class TeacherSerializer(serializers.ModelSerializer):
     students = serializers.SerializerMethodField('paginated_students')
 
     def paginated_students(self, obj):
-        students = obj.students.all()
+        students = obj.students.all().order_by('name')
 
         pagination = Paginator(students, per_page=1)
 

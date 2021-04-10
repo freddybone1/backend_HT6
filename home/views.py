@@ -6,17 +6,14 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.db import transaction
-
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-
 from django.shortcuts import render, redirect, get_object_or_404  # noqa
-
-from django.utils.decorators import method_decorator # noqa
+from django.urls import reverse_lazy, reverse
+from django.utils.decorators import method_decorator  # noqa
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from django.views.decorators.cache import cache_page  # noqa
-from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -380,14 +377,14 @@ class SignInView(View):
 
 # class StudentFilter(django_filters.FilterSet):
 #  надо переопределить поля модели -> сделать у студентов поле учителя, чтобы фильтровать по имени учителя
-# и добавить этот кастомный фильтер в ендпоинт
+# и добавить этот кастомный фильтр в ендпоинт
 #     class Meta:
 #         model = Student
 #         fields = ('teachers__name',)
 
 
 class StudentViewSet(ModelViewSet):
-    queryset = Student.objects.all()
+    queryset = Student.objects.all().order_by('name')
     serializer_class = StudentSerializer
 
     # add filters by model fields, this fields will not work if use custom filter
@@ -413,11 +410,11 @@ class StudentViewSet(ModelViewSet):
             new_book.save()
 
         serializer = StudentSerializer()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class SubjectViewSet(ModelViewSet):
-    queryset = Subject.objects.all()
+    queryset = Subject.objects.all().order_by('title')
     serializer_class = SubjectSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_fields = ("title", )
@@ -425,7 +422,7 @@ class SubjectViewSet(ModelViewSet):
 
 
 class TeacherViewSet(ModelViewSet):
-    queryset = Teacher.objects.all()
+    queryset = Teacher.objects.all().order_by('name')
     serializer_class = TeacherSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_fields = ("name", )
@@ -433,7 +430,7 @@ class TeacherViewSet(ModelViewSet):
 
 
 class BookViewSet(ModelViewSet):
-    queryset = Book.objects.all()
+    queryset = Book.objects.all().order_by('title')
     serializer_class = BookSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_fields = ("title", )
