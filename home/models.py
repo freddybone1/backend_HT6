@@ -25,22 +25,33 @@ class Student(Model):
     book = models.OneToOneField(to='home.Book', on_delete=models.CASCADE, null=True,
                                 related_name='student', related_query_name='student')
 
+    created_at = models.DateTimeField(null=True, auto_now_add=True)
+    updated_at = models.DateTimeField(null=True, auto_now=True)
+
 
 class Subject(Model):
     title = models.CharField(max_length=200)
+    created_at = models.DateTimeField(null=True, auto_now_add=True)
+    updated_at = models.DateTimeField(null=True, auto_now=True)
 
 
 class Book(Model):
     id = models.AutoField(primary_key=True)  # noqa
     title = models.CharField(max_length=200)
+    created_at = models.DateTimeField(null=True, auto_now_add=True)
+    updated_at = models.DateTimeField(null=True, auto_now=True)
 
 
 class Teacher(Model):
     id = models.AutoField(primary_key=True)  # noqa
     name = models.CharField(max_length=200)
     students = models.ManyToManyField(to='home.Student', related_name='teachers', related_query_name='teachers')
+    created_at = models.DateTimeField(null=True, auto_now_add=True)
+    updated_at = models.DateTimeField(null=True, auto_now=True)
 
 
 class Currency(Model):
     id = models.AutoField(primary_key=True)
     value = models.JSONField()
+    created_at = models.DateTimeField(null=True, auto_now_add=True)
+    updated_at = models.DateTimeField(null=True, auto_now=True)
