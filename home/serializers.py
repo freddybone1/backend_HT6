@@ -7,13 +7,13 @@ from home.models import Student, Teacher, Subject, Book
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
-        fields = ['title']
+        fields = ['title', 'created_at', 'updated_at', ]
 
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['title']
+        fields = ['title', 'created_at', 'updated_at', ]
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['name', 'age', 'email', ]  # subject
+        fields = ['name', 'age', 'email', 'created_at', 'updated_at', ]  # subject
 
 
 class TeacherSerializer(serializers.ModelSerializer):
@@ -37,4 +37,4 @@ class TeacherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Teacher
-        fields = ['name', 'students']
+        fields = ['name', 'students', 'created_at', 'updated_at', ]
