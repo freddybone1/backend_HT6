@@ -398,19 +398,19 @@ class StudentViewSet(ModelViewSet):
         Add transaction to create student and create a Book for him.
         In case if data is not valid transaction cancel creation of the Book
         """
-
-        new_book = Book()
-        new_book.title = uuid.uuid4()
-
-        student_data = request.data
-        student = Student.objects.create(name=student_data['name'], age=student_data['age'], email=student_data['email'])
-
-        student.book = new_book
         with transaction.atomic():
+            new_book = Book()
+            new_book.title = uuid.uuid4()
             new_book.save()
+            print(new_book.title)
 
-        serializer = StudentSerializer()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serializer = StudentSerializer()
+            student_data = request.data
+            student = Student.objects.create(name=student_data['name'], age=student_data['age'], email=student_data['email'])
+            student.book = new_book
+            student.save()
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class SubjectViewSet(ModelViewSet):
