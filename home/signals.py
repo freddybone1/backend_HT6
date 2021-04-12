@@ -23,18 +23,13 @@ def which_gender(sender, instance, **kwargs):
     faker = Faker()
     instance.sex = faker.bothify(text='?', letters='FMU')
 
+# comment this due to add transaction to creation book with student in one time
+# @receiver(pre_save, sender=Student)
+# def add_book_to_new_student(sender, instance, **kwargs):
+#     herd = instance.book
+#     if not instance.book:
+#         new_book = Book()
+#         new_book.title = uuid.uuid4()
+#         new_book.save()
+#         instance.book = new_book
 
-@receiver(pre_save, sender=Student)
-def add_book_to_new_student(sender, instance, **kwargs):
-    herd = instance.book
-    if not instance.book:
-        new_book = Book()
-        new_book.title = uuid.uuid4()
-        new_book.save()
-        instance.book = new_book
-
-
-@receiver(pre_save, sender=Student)
-def pick_teacher_for_student(sender, instance, **kwargs):
-    teacher_list = Teacher.objects.all()
-    

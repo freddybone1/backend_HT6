@@ -31,7 +31,7 @@ ALLOWED_HOSTS = [
     '0.0.0.0',
     '127.0.0.1',
     'localhost',
-                 ]
+]
 
 # Application definition
 
@@ -42,12 +42,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home'
+
+    'home',
+
+    'corsheaders',
+    'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -57,6 +63,8 @@ MIDDLEWARE = [
     'backend_HT5.middleware.RawDataMiddleware',
     'backend_HT5.middleware.IdentifyResponseMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 MEDIA_ROOT = '/home/f_bone/PycharmProjects/djangotest/backend_HT5/media'
 MEDIA_URL = '/media/'
@@ -90,9 +98,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        # 'REQUEST_ATOMIC': True  -> allow transaction to all methods and etc.
     }
 }
-
 
 CACHES = {
     'default': {
@@ -152,6 +160,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'home.tasks.send_email_celery',
         'schedule': crontab()
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination', # noqa
+    'PAGE_SIZE': 20
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # noqa
